@@ -9,6 +9,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -18,6 +20,7 @@ import com.google.firebase.database.ValueEventListener;
 public class MessageActivity extends AppCompatActivity {
 
     private DatabaseReference mDatabase;
+    private FirebaseUser user;
 
 
     private int messageNumber=0;
@@ -28,6 +31,8 @@ public class MessageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_message);
 
         final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
 
         final Button send = findViewById(R.id.send_msg);
         final EditText msg = findViewById(R.id.messagetxt);
@@ -42,7 +47,8 @@ public class MessageActivity extends AppCompatActivity {
 
                 messageNumber++;
 
-                mDatabase.child("messsages").child(tempNum).setValue(msg.getText().toString());
+                mDatabase.child("messsages").child(tempNum).child("user").setValue(user.getUid());
+                mDatabase.child("messsages").child(tempNum).child("content").setValue(msg.getText().toString());
             }
         });
 
@@ -54,7 +60,13 @@ public class MessageActivity extends AppCompatActivity {
                 // whenever data at this location is updated.
                 for (DataSnapshot snapshot : dataSnapshot.getChildren())
                 {
-                    txt.setText(dataSnapshot.toString() + "\n");
+
+                    for (DataSnapshot snap : snapshot.getChildren()) {
+                        txt.setText(txt.getText().toString() + snap.getValue() + "\n");
+                    }
+
+
+
                 }
 
 
