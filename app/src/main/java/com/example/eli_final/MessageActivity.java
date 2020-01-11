@@ -18,15 +18,16 @@ import com.google.firebase.database.ValueEventListener;
 public class MessageActivity extends AppCompatActivity {
 
     private DatabaseReference mDatabase;
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference myRef = database.getReference("message");
+
+
+    private int messageNumber=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
 
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
         final Button send = findViewById(R.id.send_msg);
         final EditText msg = findViewById(R.id.messagetxt);
@@ -36,39 +37,36 @@ public class MessageActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                mDatabase.child("messages").child("message55").setValue(msg.getText().toString());
+                String tempNum = Integer.toString(messageNumber);
+                tempNum="message"+tempNum;
+
+                messageNumber++;
+
+                mDatabase.child("messsages").child(tempNum).setValue(msg.getText().toString());
             }
         });
 
-
         // Read from the database
-        myRef.addValueEventListener(new ValueEventListener() {
+        mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
-                String value = dataSnapshot.getValue(String.class);
-
-                String temp = "";
-
-                /*for (DataSnapshot child : dataSnapshot.getChildren()) {
-
-                    temp +=child.getKey();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren())
+                {
+                    txt.setText(dataSnapshot.toString() + "\n");
                 }
-                */
 
 
-                txt.setText( dataSnapshot.toString());
-                //
-                // Log.d(TAG, "Value is: " + value);
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
                 // Failed to read value
-                //Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
+
+        //String temp = "";
 
 
     }
