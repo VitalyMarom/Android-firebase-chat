@@ -1,12 +1,15 @@
 package com.example.eli_final;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,11 +35,26 @@ public class MessageActivity extends AppCompatActivity {
 
         final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
+        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String toast = dataSnapshot.toString();
+
+                Toast t = Toast.makeText(MessageActivity.this,toast,Toast.LENGTH_LONG);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         final Button send = findViewById(R.id.send_msg);
         final EditText msg = findViewById(R.id.messagetxt);
         final TextView txt =findViewById(R.id.test_txt);
+        final LinearLayout linearLayout = findViewById(R.id.msg_place);
 
         send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,7 +65,7 @@ public class MessageActivity extends AppCompatActivity {
 
                 messageNumber++;
 
-                mDatabase.child("messsages").child(tempNum).child("user").setValue(user.getUid());
+                mDatabase.child("messsages").child(tempNum).child("user").setValue(user.getEmail());
                 mDatabase.child("messsages").child(tempNum).child("content").setValue(msg.getText().toString());
             }
         });
@@ -60,16 +78,16 @@ public class MessageActivity extends AppCompatActivity {
                 // whenever data at this location is updated.
                 for (DataSnapshot snapshot : dataSnapshot.getChildren())
                 {
-
                     for (DataSnapshot snap : snapshot.getChildren()) {
-                        txt.setText(txt.getText().toString() + snap.getValue() + "\n");
+                        TextView msg_txt = new TextView(MessageActivity.this);
+                        String txtForView = snap.child("user").getValue().toString();
+                        txtForView += " : " + snap.child("content").getValue().toString();
+
+                        msg_txt.setText(txtForView);
+
+                        linearLayout.addView(msg_txt);
                     }
-
-
-
                 }
-
-
             }
 
             @Override
