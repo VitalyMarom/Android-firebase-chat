@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -31,12 +32,13 @@ import java.util.List;
 
 public class MessageActivity extends AppCompatActivity {
 
-    private DatabaseReference mDatabase;
     private FirebaseUser user;
 
 
     private int messageNumber;
     private int UserImg = 1;
+    ArrayList<Chat_msg> msgList = new ArrayList<>();
+    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,57 +47,29 @@ public class MessageActivity extends AppCompatActivity {
 
         user = FirebaseAuth.getInstance().getCurrentUser();
 
-        Intent intent = getIntent();
+        Query query = FirebaseDatabase.getInstance().getReference().child("messages").limitToLast(1);
 
+        Intent intent = getIntent();
         UserImg = intent.getIntExtra("imgId",0);
 
         final Button send = findViewById(R.id.send_msg);
         final EditText msg = findViewById(R.id.messagetxt);
-        //final LinearLayout linearLayout = findViewById(R.id.msg_place);
-
-        final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-
-        final ArrayList<Chat_msg> msgList = new ArrayList<>();
+        final ListView listview = findViewById(R.id.msg_list_view);
 
         msgAdapter adapter = new msgAdapter(MessageActivity.this ,msgList);
-
-        final ListView listview = findViewById(R.id.msg_list_view);
         listview.setAdapter(adapter);
-
 
 
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-
-                /*
-
                 for(DataSnapshot snapshot : dataSnapshot.child("messages").getChildren()) {
 
-                    int i = 1;
+                    Chat_msg tmpUser = snapshot.getValue(Chat_msg.class);
 
-                    String user = snapshot.child("user").getValue().toString();
-                    String content = snapshot.child("content").getValue().toString();
-                    String img = snapshot.child("img").getValue().toString();
-                    try {
-                        i=Integer.parseInt(img);
-                    }
-                    catch (Exception e){
-
-                    }
-
-                    //Toast toast = Toast.makeText(MessageActivity.this, snapshot.toString(), Toast.LENGTH_LONG);
-                    //toast.show();
-
-                    Chat_msg tmpUser = new Chat_msg(user,content,i);
                     msgList.add(tmpUser);
-
-
-
-                }   */
-
-
+                }
 
             }
             @Override
@@ -103,31 +77,21 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
-        final Query query = FirebaseDatabase.getInstance().getReference().child("messages").limitToLast(1);
-
         query.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
+                Chat_msg tmpUser = dataSnapshot.getValue(Chat_msg.class);
 
+                msgList.add(tmpUser);
+
+                listview.setSelection(msgList.size()-1);
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                int i = 1;
-
-                String user = dataSnapshot.child("user").getValue().toString();
-                String content = dataSnapshot.child("content").getValue().toString();
-                String img = dataSnapshot.child("img").getValue(String.class);
-
-                Toast toast = Toast.makeText(MessageActivity.this, img, Toast.LENGTH_LONG);
-                toast.show();
-
-                //Chat_msg tmpUser = new Chat_msg(user,content,i);
-                //msgList.add(tmpUser);
-
-                updateList(msgList);
+                //updateList(msgList);
 
             }
 
@@ -154,13 +118,11 @@ public class MessageActivity extends AppCompatActivity {
                 String tempNum = Integer.toString(messageNumber);
                 //tempNum="message"+tempNum;
 
-                String img = String.valueOf(UserImg);
-
                 messageNumber++;
 
-                mDatabase.child("messages").child(tempNum).child("user").setValue(user.getEmail());
-                mDatabase.child("messages").child(tempNum).child("content").setValue(msg.getText().toString());
-                mDatabase.child("messages").child(tempNum).child("img").setValue(img.toString());
+                Chat_msg temp=new Chat_msg(user.getEmail(),msg.getText().toString(),UserImg);
+
+                mDatabase.child("messages").child(tempNum).setValue(temp);
 
                 //set new message number
                 mDatabase.child("messageNumber").setValue(messageNumber);
@@ -182,20 +144,5 @@ public class MessageActivity extends AppCompatActivity {
 
             }
         });
-
-
-
-
-
-    }
-
-    private void updateList(ArrayList<Chat_msg> msgList) {
-
-        msgAdapter adapter = new msgAdapter(MessageActivity.this ,msgList);
-
-        ListView listview = findViewById(R.id.msg_list_view);
-        listview.setAdapter(adapter);
-        listview.setSelection(msgList.size()-1);
-
     }
 }

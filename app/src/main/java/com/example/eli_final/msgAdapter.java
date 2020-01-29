@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class msgAdapter extends ArrayAdapter {
 
-    int imgArr[] = {R.drawable.a1, R.drawable.a2,R.drawable.a3,R.drawable.a4,R.drawable.a5};
+    int[] imgArr = {R.drawable.a1, R.drawable.a2,R.drawable.a3,R.drawable.a4,R.drawable.a5};
 
     public msgAdapter(@NonNull Context context, ArrayList<Chat_msg> msgChat) {
         super(context, 0, msgChat);
@@ -40,7 +40,7 @@ public class msgAdapter extends ArrayAdapter {
         // Populate the data into the template view using the data object
         userName.setText(msg.getUser());
         message.setText(msg.getContent());
-        imageView.setImageResource(msg.getImg());
+        imageView.setImageResource(imgArr[msg.getImg()]);
         // Return the completed view to render on screen
         return convertView;
     }

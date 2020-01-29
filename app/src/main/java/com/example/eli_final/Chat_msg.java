@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 public class Chat_msg {
     private String user;
     private String content;
-    private int img;
+    private int img=R.drawable.avatar;
 
     public int getImg() {
         return img;
@@ -21,6 +21,10 @@ public class Chat_msg {
         this.user = user;
         this.content = content;
         this.img=img;
+    }
+
+    public  Chat_msg(){
+
     }
 
     public String getUser() {
@@ -42,6 +46,6 @@ public class Chat_msg {
     @NonNull
     @Override
     public String toString() {
-        return getUser() + getContent();
+        return getUser() + getContent() + getImg();
     }
 }

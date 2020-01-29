@@ -11,14 +11,12 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="2"
-        android:fillViewport="true">
+        android:layout_weight="2">
 
         <ListView
             android:id="@+id/msg_list_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:transcriptMode="alwaysScroll"/>
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
     <LinearLayout

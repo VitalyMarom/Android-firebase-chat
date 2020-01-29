@@ -28,7 +28,7 @@ public class ImageSelect extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                intent.putExtra("imgId",R.drawable.a1);
+                intent.putExtra("imgId",0);
                 startActivity(intent);
             }
         });
@@ -37,7 +37,7 @@ public class ImageSelect extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                intent.putExtra("imgId",R.drawable.a2);
+                intent.putExtra("imgId",1);
                 startActivity(intent);
             }
         });
@@ -45,7 +45,7 @@ public class ImageSelect extends AppCompatActivity {
         a3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intent.putExtra("imgId",R.drawable.a3);
+                intent.putExtra("imgId",2);
                 startActivity(intent);
             }
         });
@@ -53,7 +53,7 @@ public class ImageSelect extends AppCompatActivity {
         a4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intent.putExtra("imgId",R.drawable.a4);
+                intent.putExtra("imgId",3);
                 startActivity(intent);
             }
         });
@@ -62,7 +62,7 @@ public class ImageSelect extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                intent.putExtra("imgId",R.drawable.a5);
+                intent.putExtra("imgId",4);
                 startActivity(intent);
             }
 
